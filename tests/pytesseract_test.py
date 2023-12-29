@@ -62,7 +62,7 @@ def test_file():
 
 @pytest.fixture(scope='session')
 def test_invalid_file():
-    return TEST_JPEG + 'invalid'
+    return f'{TEST_JPEG}invalid'
 
 
 @pytest.fixture(scope='session')
@@ -214,7 +214,7 @@ def test_image_to_osd(test_file):
         'Script',
         'Script confidence',
     ]:
-        assert key + ':' in result
+        assert f'{key}:' in result
 
 
 @pytest.mark.parametrize('extension', ['pdf', 'hocr'])
@@ -362,7 +362,7 @@ def test_image_to_data_common_output(test_file_small, output):
 
     elif output is Output.STRING:
         assert isinstance(result, string_type)
-        for key in expected_dict_result.keys():
+        for key in expected_dict_result:
             assert key in result
 
 
@@ -426,11 +426,7 @@ def test_main_not_found_cases(
     assert 'Usage: pytesseract [-l lang] input_file' in capsys.readouterr().err
 
 
-@pytest.mark.parametrize(
-    'test_path',
-    [path.sep + r'wrong_tesseract', r''],
-    ids=['permission_error_path', 'invalid_path'],
-)
+@pytest.mark.parametrize('test_path', [f'{path.sep}wrong_tesseract', r''], ids=['permission_error_path', 'invalid_path'])
 def test_proper_oserror_exception_handling(monkeypatch, test_file, test_path):
     """ "Test for bubbling up OSError exceptions."""
     import pytesseract

@@ -168,9 +168,7 @@ def run_once(func):
 
 
 def get_errors(error_string):
-    return ' '.join(
-        line for line in error_string.decode(DEFAULT_ENCODING).splitlines()
-    ).strip()
+    return ' '.join(error_string.decode(DEFAULT_ENCODING).splitlines()).strip()
 
 
 def cleanup(temp_name):
@@ -235,11 +233,7 @@ def subprocess_args(include_stdout=True):
         kwargs['startupinfo'].dwFlags |= subprocess.STARTF_USESHOWWINDOW
         kwargs['startupinfo'].wShowWindow = subprocess.SW_HIDE
 
-    if include_stdout:
-        kwargs['stdout'] = subprocess.PIPE
-    else:
-        kwargs['stdout'] = subprocess.DEVNULL
-
+    kwargs['stdout'] = subprocess.PIPE if include_stdout else subprocess.DEVNULL
     return kwargs
 
 
@@ -253,7 +247,7 @@ def run_tesseract(
     timeout=0,
 ):
     cmd_args = []
-    not_windows = not (sys.platform == 'win32')
+    not_windows = sys.platform != 'win32'
 
     if not_windows and nice != 0:
         cmd_args += ('nice', '-n', str(nice))
@@ -302,11 +296,7 @@ def run_and_get_multiple_output(
     config = ' '.join(
         EXTENTION_TO_CONFIG.get(extension, '') for extension in extensions
     ).strip()
-    if config:
-        config = f'-c {config}'
-    else:
-        config = ''
-
+    config = f'-c {config}' if config else ''
     with save(image) as (temp_name, input_filename):
         kwargs = {
             'input_filename': input_filename,
@@ -373,7 +363,7 @@ def file_to_dict(tsv, cell_delimiter, str_col_idx):
         str_col_idx += length
 
     for i, head in enumerate(header):
-        result[head] = list()
+        result[head] = []
         for row in rows:
             if len(row) <= i:
                 continue
